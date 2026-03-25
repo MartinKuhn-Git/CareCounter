@@ -19,9 +19,14 @@ const ActivityService = {
   async getByUser(userId) {
     const snapshot = await db.collection('activities')
       .where('userId', '==', userId)
-      .orderBy('createdAt', 'desc')
       .get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Client-seitig sortieren um zusammengesetzten Index zu vermeiden
+    return docs.sort((a, b) => {
+      const ta = a.createdAt?.seconds || 0;
+      const tb = b.createdAt?.seconds || 0;
+      return tb - ta;
+    });
   },
 
   // Alle Aktivitäten laden (für Dashboard)

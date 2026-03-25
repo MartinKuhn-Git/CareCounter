@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "carecounter",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "public", "-p", "5000", "-c-1"],
+      "port": 5000
+    }
+  ]
+}

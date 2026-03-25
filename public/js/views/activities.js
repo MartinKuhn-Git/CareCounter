@@ -118,22 +118,25 @@ const ActivitiesView = {
     const select = document.getElementById('activitySelect');
     let activityName = select.value;
 
+    // Remove previous error
+    document.querySelector('.form-error')?.remove();
+
     if (activityName === '__new__') {
       activityName = document.getElementById('newActivityName').value.trim();
       if (!activityName) {
-        alert('Bitte gib einen Namen für die neue Tätigkeit ein.');
+        this.showFormError('Bitte gib einen Namen für die neue Tätigkeit ein.');
         return;
       }
     }
 
     if (!activityName) {
-      alert('Bitte wähle eine Tätigkeit aus.');
+      this.showFormError('Bitte wähle eine Tätigkeit aus.');
       return;
     }
 
     const duration = document.getElementById('durationInput').value;
     if (!duration || parseFloat(duration) <= 0) {
-      alert('Bitte gib eine gültige Zeitdauer ein.');
+      this.showFormError('Bitte gib eine gültige Zeitdauer ein.');
       return;
     }
 
@@ -144,46 +147,72 @@ const ActivitiesView = {
       await this.render();
     } catch (error) {
       console.error('Fehler beim Erstellen der Tätigkeit:', error);
-      alert('Fehler beim Speichern.');
+      this.showFormError('Fehler beim Speichern.');
     }
   },
 
-  async editActivity(data) {
-    const newDuration = prompt(`Neue Zeitdauer für "${data.name}" (aktuell: ${data.duration}):`, data.duration);
-    if (newDuration === null) return;
+  editActivity(data) {
+    const item = document.querySelector(`.activity-item[data-id="${data.id}"]`);
+    if (!item) return;
 
-    const parsed = parseFloat(newDuration);
-    if (isNaN(parsed) || parsed <= 0) {
-      alert('Bitte gib eine gültige Zahl ein.');
-      return;
-    }
+    item.innerHTML = `
+      <div class="edit-form">
+        <span class="activity-name">${data.name}</span>
+        <input type="number" class="edit-duration" value="${data.duration}" min="0.25" step="0.25">
+        <select class="edit-unit">
+          <option value="hours_per_week" ${data.unit === 'hours_per_week' ? 'selected' : ''}>Std/Woche</option>
+          <option value="hours_per_day" ${data.unit === 'hours_per_day' ? 'selected' : ''}>Std/Tag</option>
+        </select>
+        <button class="btn btn-sm btn-save" data-id="${data.id}">Speichern</button>
+        <button class="btn btn-sm btn-cancel">Abbrechen</button>
+      </div>
+    `;
 
-    const newUnit = prompt(
-      `Einheit wählen:\n1 = Stunden/Tag\n2 = Stunden/Woche\n(aktuell: ${data.unit === 'hours_per_day' ? '1' : '2'})`,
-      data.unit === 'hours_per_day' ? '1' : '2'
-    );
-    if (newUnit === null) return;
+    item.querySelector('.btn-save').addEventListener('click', async () => {
+      const duration = parseFloat(item.querySelector('.edit-duration').value);
+      const unit = item.querySelector('.edit-unit').value;
+      if (isNaN(duration) || duration <= 0) return;
+      try {
+        await ActivityService.update(data.id, { duration, unit });
+        await this.render();
+      } catch (error) {
+        console.error('Fehler beim Aktualisieren:', error);
+      }
+    });
 
-    const unit = newUnit === '1' ? 'hours_per_day' : 'hours_per_week';
-
-    try {
-      await ActivityService.update(data.id, { duration: parsed, unit });
-      await this.render();
-    } catch (error) {
-      console.error('Fehler beim Aktualisieren:', error);
-      alert('Fehler beim Aktualisieren.');
-    }
+    item.querySelector('.btn-cancel').addEventListener('click', () => this.render());
   },
 
   async deleteActivity(activityId) {
-    if (!confirm('Tätigkeit wirklich löschen?')) return;
+    const item = document.querySelector(`.activity-item[data-id="${activityId}"]`);
+    if (!item) return;
 
-    try {
-      await ActivityService.delete(activityId);
-      await this.render();
-    } catch (error) {
-      console.error('Fehler beim Löschen:', error);
-      alert('Fehler beim Löschen.');
-    }
+    const name = item.querySelector('.activity-name')?.textContent || 'Tätigkeit';
+    item.innerHTML = `
+      <div class="delete-confirm">
+        <span>"${name}" wirklich löschen?</span>
+        <button class="btn btn-sm btn-delete-confirm">Ja, löschen</button>
+        <button class="btn btn-sm btn-cancel">Abbrechen</button>
+      </div>
+    `;
+
+    item.querySelector('.btn-delete-confirm').addEventListener('click', async () => {
+      try {
+        await ActivityService.delete(activityId);
+        await this.render();
+      } catch (error) {
+        console.error('Fehler beim Löschen:', error);
+      }
+    });
+
+    item.querySelector('.btn-cancel').addEventListener('click', () => this.render());
+  },
+
+  showFormError(message) {
+    document.querySelector('.form-error')?.remove();
+    const errorEl = document.createElement('div');
+    errorEl.className = 'form-error';
+    errorEl.textContent = message;
+    document.querySelector('.add-activity-form .form-row').appendChild(errorEl);
   }
 };
