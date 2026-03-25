@@ -7,12 +7,20 @@ const UserService = {
   },
 
   // User erstellen
-  async create(name) {
+  async create(name, password) {
     const docRef = await db.collection('users').add({
       name: name.trim(),
+      password,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     return { id: docRef.id, name: name.trim() };
+  },
+
+  // Passwort prüfen
+  async verifyPassword(userId, password) {
+    const doc = await db.collection('users').doc(userId).get();
+    if (!doc.exists) return false;
+    return doc.data().password === password;
   },
 
   // User löschen
