@@ -138,6 +138,8 @@ const DashboardView = {
     }
 
     const maxVal = Math.max(...user1Data, ...user2Data);
+    const isMobile = window.innerWidth <= 480;
+    const isTablet = window.innerWidth <= 768;
 
     // Percentage labels als Plugin
     const percentagePlugin = {
@@ -153,7 +155,7 @@ const DashboardView = {
           ctx.save();
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.font = 'bold 13px system-ui, sans-serif';
+          ctx.font = `bold ${isMobile ? 10 : 13}px system-ui, sans-serif`;
           ctx.fillStyle = '#334155';
           ctx.fillText(percentages[index], centerX, y);
           ctx.restore();
@@ -168,7 +170,7 @@ const DashboardView = {
         datasets: [
           {
             label: user1Name,
-            data: user1Data.map(v => -v), // Negative Werte für links
+            data: user1Data.map(v => -v),
             backgroundColor: 'rgba(59, 130, 246, 0.7)',
             borderColor: 'rgba(59, 130, 246, 1)',
             borderWidth: 1,
@@ -189,7 +191,7 @@ const DashboardView = {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { left: 10, right: 10 }
+          padding: { left: isMobile ? 2 : 10, right: isMobile ? 2 : 10 }
         },
         scales: {
           x: {
@@ -197,14 +199,15 @@ const DashboardView = {
             min: -(maxVal * 1.2),
             max: maxVal * 1.2,
             ticks: {
-              callback: (value) => Math.abs(value).toFixed(1) + ' Std',
-              font: { size: 12 }
+              callback: (value) => Math.abs(value).toFixed(isMobile ? 0 : 1) + (isMobile ? 'h' : ' Std'),
+              font: { size: isMobile ? 9 : 12 },
+              maxTicksLimit: isMobile ? 5 : 10
             },
             grid: {
               color: 'rgba(0,0,0,0.05)'
             },
             title: {
-              display: true,
+              display: !isMobile,
               text: 'Stunden pro Woche',
               font: { size: 13 }
             }
@@ -212,8 +215,8 @@ const DashboardView = {
           y: {
             stacked: false,
             ticks: {
-              font: { size: 13 },
-              padding: 50
+              font: { size: isMobile ? 10 : 13 },
+              padding: isMobile ? 20 : 50
             },
             grid: { display: false }
           }
@@ -222,8 +225,8 @@ const DashboardView = {
           legend: {
             position: 'top',
             labels: {
-              font: { size: 14 },
-              padding: 20,
+              font: { size: isMobile ? 11 : 14 },
+              padding: isMobile ? 10 : 20,
               usePointStyle: true,
               pointStyle: 'rectRounded'
             }

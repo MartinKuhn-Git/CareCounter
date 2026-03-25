@@ -575,6 +575,132 @@ body {
   .login-header h1 {
     font-size: 2rem;
   }
+
+  /* Dashboard mobile */
+  .dashboard-content {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+
+  .chart-container {
+    padding: 0.75rem;
+    min-height: 280px;
+  }
+
+  .summary {
+    padding: 1rem;
+  }
+
+  .summary th,
+  .summary td {
+    padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .summary h3 {
+    font-size: 0.95rem;
+  }
+
+  /* Activities mobile */
+  .add-activity-form {
+    padding: 0 1rem;
+  }
+
+  .activities-list {
+    padding: 0 1rem;
+  }
+
+  .edit-form .activity-name {
+    min-width: auto;
+    width: 100%;
+  }
+
+  /* Password mobile */
+  .password-form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: 0 0.5rem;
+    margin: 0.5rem auto;
+  }
+
+  .dashboard-content h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-container {
+    padding: 0.5rem 0.25rem;
+    min-height: 240px;
+    border-radius: 8px;
+  }
+
+  .summary {
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+  }
+
+  .summary table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .summary th,
+  .summary td {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .top-nav {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .top-nav h1, .top-nav h2 {
+    font-size: 1.1rem;
+  }
+
+  .nav-right .btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .current-user {
+    font-size: 0.8rem;
+  }
+
+  .login-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .login-page {
+    padding: 0 0.5rem;
+  }
+
+  .user-card {
+    width: 100%;
+  }
+
+  .add-activity-form {
+    padding: 0 0.5rem;
+  }
+
+  .activities-list {
+    padding: 0 0.5rem;
+  }
+
+  .activity-item {
+    padding: 0.75rem;
+  }
+
+  .btn {
+    font-size: 0.85rem;
+  }
 }
 
 /* Inline Edit Form */
