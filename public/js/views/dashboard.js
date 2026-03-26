@@ -45,6 +45,79 @@ const DashboardView = {
                 <canvas id="butterflyChart"></canvas>
               </div>
               <div id="summaryTable"></div>
+              <div id="heartIndicator" class="heart-indicator">
+                <div class="heart-container">
+                  <div class="heart-particles"></div>
+                  <svg class="heart-svg" viewBox="-10 -10 120 110" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <!-- Basis-Gradient: Tiefes 3D-Rot -->
+                      <radialGradient id="heartBase" cx="45%" cy="40%" r="55%" fx="35%" fy="30%">
+                        <stop offset="0%" class="heart-base-highlight"/>
+                        <stop offset="40%" class="heart-base-mid"/>
+                        <stop offset="100%" class="heart-base-shadow"/>
+                      </radialGradient>
+                      <!-- Glanzlicht oben-links -->
+                      <radialGradient id="heartShine" cx="32%" cy="28%" r="30%">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.55)"/>
+                        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                      </radialGradient>
+                      <!-- Zweites subtiles Glanzlicht rechts -->
+                      <radialGradient id="heartShine2" cx="68%" cy="35%" r="20%">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+                        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                      </radialGradient>
+                      <!-- Eis-Overlay (wird per Opacity gesteuert) -->
+                      <radialGradient id="iceOverlay" cx="50%" cy="45%" r="60%">
+                        <stop offset="0%" stop-color="rgba(200,220,240,0.3)"/>
+                        <stop offset="50%" stop-color="rgba(160,200,230,0.5)"/>
+                        <stop offset="100%" stop-color="rgba(100,150,200,0.7)"/>
+                      </radialGradient>
+                      <!-- Feuer-Glow Overlay -->
+                      <radialGradient id="fireOverlay" cx="50%" cy="60%" r="60%">
+                        <stop offset="0%" stop-color="rgba(255,200,50,0.3)"/>
+                        <stop offset="60%" stop-color="rgba(255,80,0,0.15)"/>
+                        <stop offset="100%" stop-color="rgba(180,0,0,0.1)"/>
+                      </radialGradient>
+                      <!-- 3D Schatten -->
+                      <filter id="heart3d">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+                        <feOffset in="blur" dx="3" dy="6" result="shadow"/>
+                        <feFlood flood-color="rgba(0,0,0,0.35)" result="color"/>
+                        <feComposite in="color" in2="shadow" operator="in" result="shadow"/>
+                        <feMerge>
+                          <feMergeNode in="shadow"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                      <!-- Eis-Risse Textur (clipped to heart shape) -->
+                      <clipPath id="heartClip">
+                        <path d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z"/>
+                      </clipPath>
+                      <filter id="iceCracks">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="2" result="noise"/>
+                        <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+                        <feBlend in="SourceGraphic" in2="gray" mode="overlay" result="cracked"/>
+                      </filter>
+                    </defs>
+                    <g filter="url(#heart3d)">
+                      <!-- Basis-Herz -->
+                      <path class="heart-path" d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z" fill="url(#heartBase)"/>
+                      <!-- Feuer-Overlay -->
+                      <path class="heart-fire-overlay" d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z" fill="url(#fireOverlay)" opacity="0"/>
+                      <!-- Eis-Overlay -->
+                      <path class="heart-ice-overlay" d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z" fill="url(#iceOverlay)" opacity="0"/>
+                      <!-- Eis-Risse -->
+                      <g clip-path="url(#heartClip)">
+                        <rect class="heart-ice-cracks" x="0" y="0" width="100" height="90" fill="rgba(180,210,240,0.15)" filter="url(#iceCracks)" opacity="0"/>
+                      </g>
+                      <!-- Glanzlichter -->
+                      <path d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z" fill="url(#heartShine)"/>
+                      <path d="M50 85 C50 85, 5 55, 5 30 C5 12, 20 0, 35 0 C42 0, 48 4, 50 10 C52 4, 58 0, 65 0 C80 0, 95 12, 95 30 C95 55, 50 85, 50 85Z" fill="url(#heartShine2)"/>
+                    </g>
+                  </svg>
+                  <div class="heart-label"></div>
+                </div>
+              </div>
             `
           }
         </div>
@@ -283,5 +356,134 @@ const DashboardView = {
         </table>
       </div>
     `;
+
+    this.updateHeart(totalPct1, totalPct2);
+  },
+
+  particleInterval: null,
+
+  updateHeart(pct1, pct2) {
+    const heart = document.getElementById('heartIndicator');
+    if (!heart) return;
+
+    const heartPath = heart.querySelector('.heart-path');
+    const heartLabel = heart.querySelector('.heart-label');
+    const particleBox = heart.querySelector('.heart-particles');
+
+    // Wie nah an 50/50? 0 = perfekt gleich, 50 = komplett ungleich
+    const deviation = Math.abs(pct1 - 50);
+    // 0..50 -> 1..0 (1 = 50/50, 0 = 0/100)
+    const balance = 1 - (deviation / 50);
+
+    // balance: 0 = komplett ungleich (eisblau), 1 = 50/50 (feurig rot)
+    // RGB-Interpolation für sauberen Blau->Violett->Rot Übergang
+    const lerp = (a, b, t) => Math.round(a + (b - a) * t);
+    const rgb = (r, g, b) => `rgb(${r}, ${g}, ${b})`;
+
+    // === HERZFARBE: Blau -> Rot via RGB ===
+    // Hauptfarbe direkt auf den Pfad setzen (SVG-Gradients cachen im Browser)
+    const mainColor = rgb(lerp(80, 210, balance), lerp(150, 30, balance), lerp(210, 20, balance));
+    heartPath.setAttribute('fill', mainColor);
+
+    // === OVERLAYS ===
+    const fireOverlay = heart.querySelector('.heart-fire-overlay');
+    const iceOverlay = heart.querySelector('.heart-ice-overlay');
+    const iceCracks = heart.querySelector('.heart-ice-cracks');
+
+    // Feuer-Overlay: ab balance > 0.4
+    const fireIntensity = Math.max(0, (balance - 0.4) / 0.6);
+    fireOverlay.setAttribute('opacity', fireIntensity * 0.8);
+
+    // Eis-Overlay & Risse: ab balance < 0.6
+    const iceIntensity = Math.max(0, (0.6 - balance) / 0.6);
+    iceOverlay.setAttribute('opacity', iceIntensity * 0.6);
+    iceCracks.setAttribute('opacity', iceIntensity * 0.7);
+
+    // === GLOW ===
+    const glowSize = 15 + balance * 20;
+    const glowR = lerp(100, 239, balance);
+    const glowG = lerp(180, 68, balance);
+    const glowB = lerp(255, 68, balance);
+    const glowOpacity = 0.35 + Math.abs(balance - 0.5) * 0.5;
+    const glowColor = `rgba(${glowR}, ${glowG}, ${glowB}, ${glowOpacity.toFixed(2)})`;
+
+    heart.querySelector('.heart-svg').style.filter = `drop-shadow(0 0 ${glowSize}px ${glowColor})`;
+    heart.querySelector('.heart-svg').style.animation = 'none';
+
+    // === LABEL ===
+    heartLabel.textContent = `${pct1}/${pct2}`;
+    heartLabel.style.color = rgb(
+      lerp(70, 200, balance), lerp(130, 30, balance), lerp(200, 20, balance)
+    );
+
+    // Partikel starten
+    this.startParticles(particleBox, balance);
+  },
+
+  startParticles(container, balance) {
+    // Vorherige Partikel stoppen
+    if (this.particleInterval) {
+      clearInterval(this.particleInterval);
+      this.particleInterval = null;
+    }
+    container.innerHTML = '';
+
+    const isFlame = balance > 0.5;
+    const intensity = isFlame ? balance : (1 - balance);
+    // Partikel-Rate: mehr Partikel bei höherer Intensität
+    const interval = Math.max(80, 300 - intensity * 250);
+    const maxParticles = Math.floor(8 + intensity * 15);
+
+    this.particleInterval = setInterval(() => {
+      if (container.children.length >= maxParticles) {
+        container.removeChild(container.firstChild);
+      }
+
+      const p = document.createElement('span');
+
+      if (isFlame) {
+        // Flammen: glühende Partikel die aufsteigen
+        p.className = 'particle flame';
+        const size = 4 + Math.random() * 10;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.borderRadius = '50%';
+        // Flammen-Farben: gelb, orange, rot
+        const colors = ['#ff6600', '#ff4400', '#ffaa00', '#ff2200', '#ffcc00', '#ff8800'];
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.boxShadow = `0 0 ${size}px ${size/2}px ${p.style.background}`;
+        p.style.left = (15 + Math.random() * 70) + '%';
+        p.style.bottom = '15%';
+        const dur = 0.6 + Math.random() * 1.2;
+        p.style.animationDuration = dur + 's';
+        p.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+      } else {
+        // Eiskristalle: fallen nach unten
+        p.className = 'particle ice';
+        if (Math.random() > 0.4) {
+          // Schneeflocken-Zeichen
+          const crystals = ['\u2744', '\u2745', '\u2746'];
+          p.textContent = crystals[Math.floor(Math.random() * crystals.length)];
+          p.style.fontSize = (10 + Math.random() * 14) + 'px';
+        } else {
+          // Kleine glitzernde Eispunkte
+          const size = 2 + Math.random() * 5;
+          p.style.width = size + 'px';
+          p.style.height = size + 'px';
+          p.style.borderRadius = '50%';
+          p.style.background = 'rgba(200, 230, 255, 0.8)';
+          p.style.boxShadow = `0 0 ${size + 2}px rgba(150, 200, 255, 0.6)`;
+        }
+        p.style.left = (5 + Math.random() * 90) + '%';
+        p.style.top = '0%';
+        const dur = 2 + Math.random() * 3;
+        p.style.animationDuration = dur + 's';
+        p.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+      }
+
+      container.appendChild(p);
+      // Partikel nach Animation entfernen
+      p.addEventListener('animationend', () => p.remove());
+    }, interval);
   }
 };
