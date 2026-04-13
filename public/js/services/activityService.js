@@ -72,9 +72,8 @@ const ActivityService = {
 
   // Stunden pro Woche berechnen
   toWeeklyHours(duration, unit) {
-    if (unit === 'hours_per_day') {
-      return duration * 7;
-    }
+    if (unit === 'hours_per_day') return duration * 7;
+    if (unit === 'hours_per_year') return duration / 52;
     return duration; // already hours_per_week
   }
 };

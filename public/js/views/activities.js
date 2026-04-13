@@ -37,6 +37,7 @@ const ActivitiesView = {
               <select id="unitSelect">
                 <option value="hours_per_week">Stunden / Woche</option>
                 <option value="hours_per_day">Stunden / Tag</option>
+                <option value="hours_per_year">Stunden / Jahr</option>
               </select>
             </div>
             <div class="form-group form-action">
@@ -61,7 +62,8 @@ const ActivitiesView = {
   },
 
   renderActivityItem(activity) {
-    const unitLabel = activity.unit === 'hours_per_day' ? 'Std/Tag' : 'Std/Woche';
+    const unitLabels = { hours_per_day: 'Std/Tag', hours_per_week: 'Std/Woche', hours_per_year: 'Std/Jahr' };
+    const unitLabel = unitLabels[activity.unit] || 'Std/Woche';
     const weeklyHours = ActivityService.toWeeklyHours(activity.duration, activity.unit);
 
     return `
@@ -162,6 +164,7 @@ const ActivitiesView = {
         <select class="edit-unit">
           <option value="hours_per_week" ${data.unit === 'hours_per_week' ? 'selected' : ''}>Std/Woche</option>
           <option value="hours_per_day" ${data.unit === 'hours_per_day' ? 'selected' : ''}>Std/Tag</option>
+          <option value="hours_per_year" ${data.unit === 'hours_per_year' ? 'selected' : ''}>Std/Jahr</option>
         </select>
         <button class="btn btn-sm btn-save" data-id="${data.id}">Speichern</button>
         <button class="btn btn-sm btn-cancel">Abbrechen</button>
